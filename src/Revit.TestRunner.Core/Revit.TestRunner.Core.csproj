@@ -92,7 +92,7 @@
     <AssemblyName>Revit.TestRunner.Core</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Revit.TestRunner.Core</RootNamespace>
+    <RootNamespace>Revit.TestRunner</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -175,6 +175,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ReflectionRunner.cs" />
+    <Compile Include="TestRunnerService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
