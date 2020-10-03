@@ -19,7 +19,7 @@ namespace Revit.TestRunner.Runner
         /// Execute Test described in <paramref name="test"/>.
         /// Returns a new <see cref="TestCase"/> object with the test result.
         /// </summary>
-        internal async Task<TestCase> RunTest( TestCase test, UIApplication uiApplication )
+        public async Task<TestCase> RunTest( TestCase test, UIApplication uiApplication )
         {
             TestCase result = new TestCase {
                 Id = test.Id,

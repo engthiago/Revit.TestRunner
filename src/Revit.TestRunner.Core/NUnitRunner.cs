@@ -45,7 +45,7 @@ namespace Revit.TestRunner.Runner
         /// <summary>
         /// Get the path of the explore result file.
         /// </summary>
-        internal string ExploreResultFile => Path.Combine( OutputDirectory, FileNames.ExploreResultFileName );
+        public string ExploreResultFile => Path.Combine( OutputDirectory, FileNames.ExploreResultFileName );
         #endregion
 
         #region Methds
@@ -55,7 +55,7 @@ namespace Revit.TestRunner.Runner
         /// Explore the assembly using nUnit.
         /// </summary>
         /// <returns>Exception message</returns>
-        internal string ExploreAssembly()
+        public string ExploreAssembly()
         {
             string message = string.Empty;
             ITestRunner testRunner = null;
