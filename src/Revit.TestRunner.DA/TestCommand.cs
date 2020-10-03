@@ -31,7 +31,9 @@ namespace Revit.TestRunner.DA
             };
 
             var testRunner = new TestRunnerService();
-            testRunner.Run(commandData.Application.Application, request);
+            var results = testRunner.Run(commandData.Application.Application, request);
+
+            TaskDialog.Show("Results:", results);
 
             return Result.Succeeded;
         }
