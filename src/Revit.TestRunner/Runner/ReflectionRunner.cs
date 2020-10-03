@@ -49,10 +49,17 @@ namespace Revit.TestRunner.Runner
             MethodInfo testMethod = null;
 
             try {
-                if( !File.Exists( test.AssemblyPath ) ) throw new FileNotFoundException( $"Assembly not found! {test.AssemblyPath}" );
+                if( !File.Exists( test.AssemblyPath ) ) {
+                    throw new FileNotFoundException($"Assembly not found! {test.AssemblyPath}");
+                }
 
                 Assembly assembly = Assembly.LoadFile( test.AssemblyPath );
+
                 Type type = assembly.GetType( test.TestClass );
+                if ( type == null ) {
+                    throw new TypeLoadException($"Test class: {test.TestClass} not found on dll: {test.AssemblyPath}\n\nMake sure you have specified the right dll and the right class path");
+                }
+
                 obj = Activator.CreateInstance( type );
 
                 setUp = GetMethodByAttribute( type, typeof( SetUpAttribute ) );
