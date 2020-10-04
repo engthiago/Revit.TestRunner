@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationPackage Name="RevitDesignAutomation" Description="Test Runner for Design Automation" Author="Test Runner">
+  <CompanyDetails Name="Test Runner"/>
+  <Components Description="Test Runner for Design Automation">
+    <RuntimeRequirements SeriesMax="R2021" SeriesMin="R2019" Platform="Revit" OS="Win64"/>
+    <ComponentEntry LoadOnRevitStartup="True" LoadOnCommandInvocation="False" AppDescription="Test Runner" ModuleName="./Contents/TestRunner.addin" Version="1.0.0" AppName="Test Runner"/>
+  </Components>
+</ApplicationPackage>

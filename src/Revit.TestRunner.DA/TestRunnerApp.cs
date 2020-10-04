@@ -4,6 +4,8 @@ using Autodesk.Revit.DB;
 using DesignAutomationFramework;
 using Revit.TestRunner.Shared.Communication;
 using System;
+using System.IO;
+using System.Linq;
 
 namespace Revit.TestRunner.DA
 {
@@ -24,6 +26,17 @@ namespace Revit.TestRunner.DA
             var doc = appData.RevitDoc;
 
             e.Succeeded = true;
+            var path = Directory.GetCurrentDirectory();
+
+            Console.WriteLine($"********** Directory Files**********");
+            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                Console.WriteLine($"File: {file}");
+            }
+            Console.WriteLine($"**********                **********");
+
+            var assemblyPath = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f => f.EndsWith("Revit.TestRunner.SampleTestProject.dll"));
 
             var request = new RunRequest();
             request.Id = "Runner";
@@ -32,7 +45,7 @@ namespace Revit.TestRunner.DA
             request.Cases[0] = new TestCase
             {
                 Id = "1",
-                AssemblyPath = "Revit.TestRunner.SampleTestProject.dll",
+                AssemblyPath = assemblyPath,
                 TestClass = "Revit.TestRunner.SampleTestProject.SampleTest",
                 MethodName = "PassTest"
             };
@@ -40,7 +53,7 @@ namespace Revit.TestRunner.DA
             request.Cases[1] = new TestCase
             {
                 Id = "2",
-                AssemblyPath = "Revit.TestRunner.SampleTestProject.dll",
+                AssemblyPath = assemblyPath,
                 TestClass = "Revit.TestRunner.SampleTestProject.SampleTest",
                 MethodName = "FailTest"
             }; 

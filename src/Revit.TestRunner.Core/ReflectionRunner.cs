@@ -102,7 +102,7 @@ namespace Revit.TestRunner.Runner
                 }
             }
 
-            Log.Info($" >> {result.TestClass}.{result.MethodName} - {result.State} - {result.Message}");
+            //Log.Info($" >> {result.TestClass}.{result.MethodName} - {result.State} - {result.Message}");
 
             return result;
         }
@@ -183,8 +183,6 @@ namespace Revit.TestRunner.Runner
                 }
             }
 
-            Log.Info( $" >> {result.TestClass}.{result.MethodName} - {result.State} - {result.Message}" );
-
             return result;
         }
 
@@ -215,7 +213,6 @@ namespace Revit.TestRunner.Runner
 
             Exception toLogEx = e.InnerException ?? e;
 
-            Log.Error( toLogEx );
             @case.Message = toLogEx.Message;
             @case.StackTrace = toLogEx.StackTrace;
         }

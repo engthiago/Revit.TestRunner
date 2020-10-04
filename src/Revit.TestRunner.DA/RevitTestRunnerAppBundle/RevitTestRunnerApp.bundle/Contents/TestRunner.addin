@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="DBApplication">
+    <Name>Test Runner for Design Automation</Name>
+    <FullClassName>Revit.TestRunner.DA.TestRunnerApp</FullClassName>
+    <Text>Test Runner for Design Automation</Text>
+    <Description>Blackbirds Design Automation App</Description>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+    <Assembly>.\Revit.TestRunner\Revit.TestRunner.DA.dll</Assembly>
+    <AddInId>30EFA6F5-5C78-4E9F-A809-00562FBA32F8</AddInId>
+    <VendorId>TST</VendorId>
+  </AddIn>
+</RevitAddIns>
