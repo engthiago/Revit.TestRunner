@@ -33,7 +33,7 @@ namespace Revit.TestRunner.Server
 
             Initialize();
 
-            Log.Info( $"Service started '{DateTime.Now}'" );
+            //Log.Info( $"Service started '{DateTime.Now}'" );
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Revit.TestRunner.Server
             mApplication.Idling -= OnIdle;
             mApplication = null;
 
-            Log.Info( $"Service stopped '{DateTime.Now}'" );
+            //Log.Info( $"Service stopped '{DateTime.Now}'" );
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Revit.TestRunner.Server
         {
             RunnerStatus status = new RunnerStatus {
                 Timestamp = DateTime.Now,
-                LogFilePath = Log.LogFilePath,
+                //LogFilePath = Log.LogFilePath,
                 RevitVersion = mApplication?.ControlledApplication?.VersionName
             };
 
@@ -235,7 +235,7 @@ namespace Revit.TestRunner.Server
 
         private void LogInfo( string summaryPath, object message )
         {
-            Log.Info( message );
+            //Log.Info( message );
             File.AppendAllText( summaryPath, message + "\n" );
         }
         #endregion

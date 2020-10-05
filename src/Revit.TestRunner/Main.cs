@@ -18,10 +18,10 @@ namespace Revit.TestRunner
 
         public Result OnStartup( UIControlledApplication application )
         {
-            Log.Info( $"Revit.TestRunner started '{DateTime.Now}'" );
-            Log.Info( $"{Environment.OSVersion}, NetFX {Environment.Version}" );
-            Log.Debug( $"Log Directory '{Log.LogDirectory}'" );
-            Log.Debug( $"CurrentAppDomain.ApplicationBase '{AppDomain.CurrentDomain.SetupInformation.ApplicationBase}'" );
+            //Log.Info( $"Revit.TestRunner started '{DateTime.Now}'" );
+            //Log.Info( $"{Environment.OSVersion}, NetFX {Environment.Version}" );
+            //Log.Debug( $"Log Directory '{Log.LogDirectory}'" );
+            //Log.Debug( $"CurrentAppDomain.ApplicationBase '{AppDomain.CurrentDomain.SetupInformation.ApplicationBase}'" );
 
             RibbonPanel ribbonPanel = application.CreateRibbonPanel( "Testing" );
 

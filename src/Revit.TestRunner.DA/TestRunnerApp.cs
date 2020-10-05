@@ -34,30 +34,15 @@ namespace Revit.TestRunner.DA
             {
                 Console.WriteLine($"File: {file}");
             }
-            Console.WriteLine($"**********                **********");
+            Console.WriteLine($"************************************");
 
             var assemblyPath = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f => f.EndsWith("Revit.TestRunner.SampleTestProject.dll"));
 
-            var request = new RunRequest();
-            request.Id = "Runner";
-            request.Cases = new TestCase[2];
+            // Reflects TestCases from the Assembly
+            var flattenService = new NUnitCaseFlattenService();
+            var runnerService = new NUnitRunnerService(flattenService);
+            var request = runnerService.GetRequestFromAssembly(assemblyPath);
 
-            request.Cases[0] = new TestCase
-            {
-                Id = "1",
-                AssemblyPath = assemblyPath,
-                TestClass = "Revit.TestRunner.SampleTestProject.SampleTest",
-                MethodName = "PassTest"
-            };
-
-            request.Cases[1] = new TestCase
-            {
-                Id = "2",
-                AssemblyPath = assemblyPath,
-                TestClass = "Revit.TestRunner.SampleTestProject.SampleTest",
-                MethodName = "FailTest"
-            }; 
-            
             var testRunner = new TestRunnerService();
             var results = testRunner.Run(app, request);
 

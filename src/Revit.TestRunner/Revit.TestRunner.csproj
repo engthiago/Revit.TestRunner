@@ -106,9 +106,11 @@
       <ItemGroup>
         <Reference Include="RevitAPI, Version=21.0.0.0, Culture=neutral, processorArchitecture=AMD64">
           <HintPath>..\Libs\Revit2021\lib\net47\RevitAPI.dll</HintPath>
+          <Private>False</Private>
         </Reference>
         <Reference Include="RevitAPIUI, Version=21.0.0.0, Culture=neutral, processorArchitecture=AMD64">
           <HintPath>..\Libs\Revit2021\lib\net47\RevitAPIUI.dll</HintPath>
+          <Private>False</Private>
         </Reference>
       </ItemGroup>
     </When>
