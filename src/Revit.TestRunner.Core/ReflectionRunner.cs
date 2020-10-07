@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autodesk.Revit.ApplicationServices;
-using Autodesk.Revit.UI;
 using NUnit.Framework;
 using Revit.TestRunner.Shared.Communication;
 
@@ -103,85 +102,6 @@ namespace Revit.TestRunner.Runner
             }
 
             //Log.Info($" >> {result.TestClass}.{result.MethodName} - {result.State} - {result.Message}");
-
-            return result;
-        }
-
-        /// <summary>
-        /// Execute Test described in <paramref name="test"/>.
-        /// Returns a new <see cref="TestCase"/> object with the test result.
-        /// </summary>
-        [Obsolete("Use RunTest with DB Application instead")]
-        public async Task<TestCase> RunTest( TestCase test, UIApplication uiApplication )
-        {
-            TestCase result = new TestCase {
-                Id = test.Id,
-                AssemblyPath = test.AssemblyPath,
-                TestClass = test.MethodName,
-                MethodName = test.MethodName,
-                State = TestState.Unknown
-            };
-
-            if( string.IsNullOrEmpty( test.Id ) ) result.Message = "Missing ID";
-            if( string.IsNullOrEmpty( test.AssemblyPath ) ) result.Message = "Missing AssemblyPath";
-            if( string.IsNullOrEmpty( test.TestClass ) ) result.Message = "Missing ClassName";
-            if( string.IsNullOrEmpty( test.MethodName ) ) result.Message = "Missing MethodName";
-            if( test.State != TestState.Unknown ) result.Message = $"Wrong not in State '{TestState.Unknown}'";
-
-            if( !string.IsNullOrEmpty( test.Message ) ) {
-                test.State = TestState.Failed;
-                return result;
-            }
-
-
-            var possibleParams = new object[] { uiApplication, uiApplication.Application };
-
-            object obj = null;
-            MethodInfo setUp = null;
-            MethodInfo tearDown = null;
-            MethodInfo testMethod = null;
-
-            try {
-                if( !File.Exists( test.AssemblyPath ) ) {
-                    throw new FileNotFoundException($"Assembly not found! {test.AssemblyPath}");
-                }
-
-                Assembly assembly = Assembly.LoadFile( test.AssemblyPath );
-
-                Type type = assembly.GetType( test.TestClass );
-                if ( type == null ) {
-                    throw new TypeLoadException($"Test class: {test.TestClass} not found on dll: {test.AssemblyPath}\n\nMake sure you have specified the right dll and the right class path");
-                }
-
-                obj = Activator.CreateInstance( type );
-
-                setUp = GetMethodByAttribute( type, typeof( SetUpAttribute ) );
-                testMethod = type.GetMethod( test.MethodName );
-                tearDown = GetMethodByAttribute( type, typeof( TearDownAttribute ) );
-
-                var customAttributes = testMethod.CustomAttributes;
-                var extendedParams = possibleParams.ToList();
-
-                foreach( CustomAttributeData customAttribute in customAttributes ) {
-                    extendedParams.AddRange( customAttribute.ConstructorArguments.Select( a => a.Value ) );
-                }
-
-                await InvokeMethod( obj, setUp, possibleParams );
-                await InvokeMethod( obj, testMethod, extendedParams.ToArray() );
-
-                result.State = TestState.Passed;
-            }
-            catch( Exception e ) {
-                ReportException( result, e );
-            }
-            finally {
-                try {
-                    await InvokeMethod( obj, tearDown, possibleParams );
-                }
-                catch( Exception e ) {
-                    ReportException( result, e );
-                }
-            }
 
             return result;
         }

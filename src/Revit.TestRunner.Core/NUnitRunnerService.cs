@@ -1,6 +1,7 @@
 ﻿using NUnit;
 using NUnit.Engine;
 using NUnit.Engine.Services;
+using Revit.TestRunner.Shared;
 using Revit.TestRunner.Shared.Communication;
 using Revit.TestRunner.Shared.NUnit;
 using System;
@@ -45,8 +46,14 @@ namespace Revit.TestRunner
                 return null;
             }
 
+            Console.WriteLine("****Node: ");
+            Console.WriteLine(node.InnerXml);
+
             var nunitTestSuite = new NUnitTestSuite(node);
             var nUnitCases = nUnitCaseFlattenService.Flatten(nunitTestSuite);
+
+            Console.WriteLine("UnitCases: ");
+            Console.WriteLine(JsonHelper.ToString(nUnitCases));
 
             var testCases = new List<TestCase>();
             foreach (var nUnitCase in nUnitCases)
@@ -75,18 +82,21 @@ namespace Revit.TestRunner
         /// <summary>
         /// Create the nUnit test runner.
         /// </summary>
-        private ITestRunner CreateTestRunner(string assemblyPath)
+        public ITestRunner CreateTestRunner(string assemblyPath)
         {
-            ITestEngine engine = CreateTestEngine();
+            ITestRunner result = null;
+            ITestEngine engine = CreateTestEngine(assemblyPath);
 
+            var dir = Path.GetDirectoryName(assemblyPath);
             TestPackage testPackage = new TestPackage(assemblyPath);
 
-            // https://github.com/nunit/nunit-console/blob/master/src/NUnitEngine/nunit.engine/EnginePackageSettings.cs
+            //https://github.com/nunit/nunit-console/blob/master/src/NUnitEngine/nunit.engine/EnginePackageSettings.cs
             string processModel = "InProcess";
             string domainUsage = "None";
             testPackage.AddSetting(EnginePackageSettings.ProcessModel, processModel);
             testPackage.AddSetting(EnginePackageSettings.DomainUsage, domainUsage);
-            ITestRunner result = engine.GetRunner(testPackage);
+            testPackage.AddSetting(EnginePackageSettings.WorkDirectory, dir);
+            result = engine.GetRunner(testPackage);
 
             var agency = engine.Services.GetService<TestAgency>();
             agency?.StopService();
@@ -97,7 +107,7 @@ namespace Revit.TestRunner
         /// <summary>
         /// Create the nUnit test engine.
         /// </summary>
-        private ITestEngine CreateTestEngine()
+        public ITestEngine CreateTestEngine(string assemblyPath)
         {
             // Normal way to create a NUnit TestEngine.
             // Not possible because of use AppDomain.CurrentDomain.BaseDirectory which points to bin of Revit.
@@ -106,9 +116,8 @@ namespace Revit.TestRunner
             // Private way to create NUnit TestEngine, using bin directory of TestRunner.
             const string defaultAssemblyName = "nunit.engine.dll";
             const string defaultTypeName = "NUnit.Engine.TestEngine";
-            string executionAssemblyPath = Assembly.GetExecutingAssembly().Location;
-            var executionAssembly = new FileInfo(executionAssemblyPath);
-            string workingDirectory = Path.Combine(executionAssembly.Directory.FullName, defaultAssemblyName);
+            string directory = Path.GetDirectoryName(assemblyPath);
+            string workingDirectory = Path.Combine(directory, defaultAssemblyName);
 
             var engineAssembly = Assembly.ReflectionOnlyLoadFrom(workingDirectory);
             var engine = (ITestEngine)AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(engineAssembly.CodeBase, defaultTypeName);

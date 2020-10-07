@@ -153,7 +153,7 @@ namespace Revit.TestRunner.Server
 
                         WriteTestResultFile( response.Directory, runResult, false );
 
-                        var testResult = await runner.RunTest( test, application );
+                        var testResult = await runner.RunTest( test, application.Application );
 
                         runTestResult.State = testResult.State;
                         runTestResult.Message = testResult.Message;

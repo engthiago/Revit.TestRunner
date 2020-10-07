@@ -1,5 +1,4 @@
 ﻿using Autodesk.Revit.ApplicationServices;
-using Autodesk.Revit.UI;
 using NUnit.Framework;
 
 namespace Revit.TestRunner.SampleTestProject
@@ -7,22 +6,22 @@ namespace Revit.TestRunner.SampleTestProject
     public class ParameterTest
     {
         [SetUp]
-        public void SetUp( UIApplication uiApplication )
+        public void SetUp(Application application)
         {
-            Assert.NotNull( uiApplication );
+            Assert.NotNull(application);
         }
 
         [TearDown]
-        public void TearDown( Application application )
+        public void TearDown(Application application )
         {
             Assert.NotNull( application );
         }
 
 
         [Test]
-        public void UiApplicationTest( UIApplication uiApplication )
+        public void UiApplicationTest(Application application)
         {
-            Assert.NotNull( uiApplication );
+            Assert.NotNull(application);
         }
 
         [Test]
@@ -32,16 +31,14 @@ namespace Revit.TestRunner.SampleTestProject
         }
 
         [Test]
-        public void MultiParameterTest1( UIApplication uiApplication, Application application )
+        public void MultiParameterTest1( Application application )
         {
-            Assert.IsNotNull( uiApplication.Application );
             Assert.IsNotNull( application );
         }
 
         [Test]
-        public void MultiParameterTest2( Application application, UIApplication uiApplication )
+        public void MultiParameterTest2( Application application )
         {
-            Assert.IsNotNull( uiApplication );
             Assert.IsNotNull( application );
         }
 

@@ -1,5 +1,10 @@
 C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.Core\bin\x64\D2019\Revit.TestRunner.Core.dll
 C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.Core\bin\x64\D2019\Revit.TestRunner.Core.pdb
+C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\nunit-agent-x86.exe
+C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\nunit-agent-x86.exe.config
+C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\nunit-agent.exe
+C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\nunit-agent.exe.config
+C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\nunit.engine.nuget.addins
 C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\Revit.TestRunner.Core.dll
 C:\Users\Thiago\source\repos\Revit.TestRunner\src\bin\Addin\Revit.TestRunner.Core.pdb
 C:\Users\Thiago\source\repos\Revit.TestRunner\src\Revit.TestRunner.Core\obj\x64\D2019\Revit.TestRunner.Core.csprojAssemblyReference.cache

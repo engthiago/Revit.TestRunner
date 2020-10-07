@@ -129,10 +129,6 @@
           <HintPath>..\Libs\Revit2019\lib\net45\RevitAPI.dll</HintPath>
           <Private>False</Private>
         </Reference>
-        <Reference Include="RevitAPIUI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-          <HintPath>..\Libs\Revit2019\lib\net45\RevitAPIUI.dll</HintPath>
-          <Private>False</Private>
-        </Reference>
       </ItemGroup>
     </When>
     <When Condition="$(DefineConstants.Contains('Revit2018'))">

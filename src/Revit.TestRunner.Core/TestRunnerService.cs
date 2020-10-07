@@ -1,11 +1,20 @@
 ﻿using Autodesk.Revit.ApplicationServices;
+using NUnit.Engine;
 using Revit.TestRunner.Runner;
 using Revit.TestRunner.Shared.Communication;
 using System;
 using System.Text;
+using System.Xml;
 
 namespace Revit.TestRunner
 {
+    public class TestListener : ITestEventListener
+    {
+        public void OnTestEvent(string report)
+        {
+        }
+    }
+
     public class TestRunnerService
     {
         public TestRunnerService()
@@ -37,7 +46,7 @@ namespace Revit.TestRunner
             }
             else
             {
-                results = $"====> Test #{testResult.Id}:\n{testResult.MethodName}\n\n";
+                results = $"====> Test SUCCEEDED #{testResult.Id}:\n{testResult.MethodName}\n\n";
             }
 
             return results;
