@@ -1,7 +1,6 @@
 ﻿using NUnit;
 using NUnit.Engine;
 using NUnit.Engine.Services;
-using Revit.TestRunner.Shared;
 using Revit.TestRunner.Shared.Communication;
 using Revit.TestRunner.Shared.NUnit;
 using System;
@@ -12,6 +11,8 @@ using System.Xml;
 
 namespace Revit.TestRunner
 {
+
+
     public class NUnitRunnerService
     {
         private readonly NUnitCaseFlattenService nUnitCaseFlattenService;
@@ -28,7 +29,7 @@ namespace Revit.TestRunner
             try
             {
                 testRunner = CreateTestRunner(assemblyPath);
-                result = testRunner.Explore(TestFilter.Empty);
+                result = testRunner.Explore(NUnit.Engine.TestFilter.Empty);
             }
             finally
             {
@@ -47,13 +48,11 @@ namespace Revit.TestRunner
             }
 
             Console.WriteLine("****Node: ");
-            Console.WriteLine(node.InnerXml);
+            Console.WriteLine(node.OuterXml);
+            Console.WriteLine("**********");
 
             var nunitTestSuite = new NUnitTestSuite(node);
             var nUnitCases = nUnitCaseFlattenService.Flatten(nunitTestSuite);
-
-            Console.WriteLine("UnitCases: ");
-            Console.WriteLine(JsonHelper.ToString(nUnitCases));
 
             var testCases = new List<TestCase>();
             foreach (var nUnitCase in nUnitCases)
@@ -69,9 +68,9 @@ namespace Revit.TestRunner
                 testCases.Add(testCase);
             }
 
-
             RunRequest request = new RunRequest
             {
+                ClientName = "Revit",
                 Timestamp = DateTime.Now,
                 Cases = testCases.ToArray()
             };
@@ -97,9 +96,6 @@ namespace Revit.TestRunner
             testPackage.AddSetting(EnginePackageSettings.DomainUsage, domainUsage);
             testPackage.AddSetting(EnginePackageSettings.WorkDirectory, dir);
             result = engine.GetRunner(testPackage);
-
-            var agency = engine.Services.GetService<TestAgency>();
-            agency?.StopService();
 
             return result;
         }

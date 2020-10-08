@@ -43,7 +43,6 @@ namespace Revit.TestRunner.Runner
                 return result;
             }
 
-
             var possibleParams = new object[] { application };
 
             object obj = null;
@@ -66,21 +65,29 @@ namespace Revit.TestRunner.Runner
                     throw new TypeLoadException($"Test class: {test.TestClass} not found on dll: {test.AssemblyPath}\n\nMake sure you have specified the right dll and the right class path");
                 }
 
-                obj = Activator.CreateInstance(type);
+                var constructor = type.GetConstructors().FirstOrDefault();
+                if (constructor.GetParameters().Length > 0)
+                {
+                    obj = Activator.CreateInstance(type, new object[] { application });
+                }
+                else
+                {
+                    obj = Activator.CreateInstance(type);
+                }
 
                 setUp = GetMethodByAttribute(type, typeof(SetUpAttribute));
                 testMethod = type.GetMethod(test.MethodName);
                 tearDown = GetMethodByAttribute(type, typeof(TearDownAttribute));
 
                 var customAttributes = testMethod.CustomAttributes;
-                var extendedParams = possibleParams.ToList();
+                var extendedParams = new List<object>();
 
                 foreach (CustomAttributeData customAttribute in customAttributes)
                 {
                     extendedParams.AddRange(customAttribute.ConstructorArguments.Select(a => a.Value));
                 }
 
-                await InvokeMethod(obj, setUp, possibleParams);
+                await InvokeMethod(obj, setUp, new object[0]);
                 await InvokeMethod(obj, testMethod, extendedParams.ToArray());
 
                 result.State = TestState.Passed;
@@ -93,7 +100,7 @@ namespace Revit.TestRunner.Runner
             {
                 try
                 {
-                    await InvokeMethod(obj, tearDown, possibleParams);
+                    await InvokeMethod(obj, tearDown, new object[0]);
                 }
                 catch (Exception e)
                 {
@@ -112,14 +119,14 @@ namespace Revit.TestRunner.Runner
         private async Task InvokeMethod( object obj, MethodInfo method, object[] possibleParams )
         {
             if( method != null ) {
-                var methodParams = OrderParameters( method, possibleParams );
+                var methodParams = OrderParameters(method, possibleParams);
 
-                if( method.ReturnType == typeof( Task ) ) {
-                    Task task = (Task)method.Invoke( obj, methodParams );
+                if ( method.ReturnType == typeof( Task ) ) {
+                    Task task = (Task)method.Invoke( obj, methodParams);
                     await task;
                 }
                 else {
-                    method.Invoke( obj, methodParams );
+                    method.Invoke( obj, methodParams);
                 }
             }
         }
@@ -148,7 +155,6 @@ namespace Revit.TestRunner.Runner
 
             foreach( ParameterInfo parameter in parameters ) {
                 object o = possibleParamsList.FirstOrDefault( i => i.GetType() == parameter.ParameterType );
-                possibleParamsList.Remove( o );
                 result.Add( o );
             }
 

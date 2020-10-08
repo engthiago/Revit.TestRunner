@@ -2,15 +2,19 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using DesignAutomationFramework;
+using NUnit;
+using NUnit.Engine;
 using Revit.TestRunner.Shared;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Revit.TestRunner.DA
 {
+
     [Regeneration(RegenerationOption.Manual)]
     [Transaction(TransactionMode.Manual)]
     public class TestRunnerApp : IExternalDBApplication
@@ -33,7 +37,7 @@ namespace Revit.TestRunner.DA
             var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                if (file.Contains("nunit"))
+                if (file.Contains(@"\nunit\") || file.Contains(@"\workitemBundle\"))
                 {
                     var fileName = Path.GetFileName(file);
                     var rootFile = Path.Combine(path, fileName);
@@ -49,96 +53,104 @@ namespace Revit.TestRunner.DA
             Console.WriteLine("*************************************");
 
             var testSuitesPath = "testSuites.json";
-            TestSuitesInput testSuitesInput = null;
+            TestSuite testSuite = null;
             if (!File.Exists(testSuitesPath))
             {
-                Console.WriteLine($"***** Test Suites file not found: {testSuitesPath}");
+                Console.WriteLine($"***** Test Suite file not found: {testSuitesPath}");
             }
             else
             {
-                testSuitesInput = JsonHelper.FromFile<TestSuitesInput>(testSuitesPath);
+                testSuite = JsonHelper.FromFile<TestSuite>(testSuitesPath);
             }
 
-            var resultStringBuilder = new StringBuilder();
-            if (testSuitesInput == null)
+            if (testSuite == null)
             {
-                Console.WriteLine($"***** Test Suites file parsing error: {testSuitesPath}");
+                Console.WriteLine($"***** Test Suite json parsing error: {testSuitesPath}");
+                e.Succeeded = false;
             }
             else
             {
-                foreach (var testSuite in testSuitesInput.TestSuites)
+
+                var assemblyPath = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f => f.EndsWith(testSuite.Assembly));
+
+                if (string.IsNullOrWhiteSpace(assemblyPath))
                 {
-                    var assemblyPath = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f => f.EndsWith(testSuite.Assembly));
+                    Console.WriteLine($"***** Test Suite failed, the assembly {testSuite.Assembly} was not found.");
+                    e.Succeeded = false;
+                    return;
+                }
 
-                    if (string.IsNullOrWhiteSpace(assemblyPath))
+                if (!string.IsNullOrWhiteSpace(testSuite.RvtFile))
+                {
+                    var normalizedRvtFile = testSuite.RvtFile.ToLower();
+                    if (
+                           !normalizedRvtFile.EndsWith(".rte")
+                        && !normalizedRvtFile.EndsWith(".rvt")
+                        && !normalizedRvtFile.EndsWith(".rfa")
+                        && !normalizedRvtFile.EndsWith(".rtf")
+                        )
                     {
-                        Console.WriteLine($"***** Test Suite failed, the assembly {testSuite.Assembly} was not found.");
-                        continue;
-                    }
-                    else
-                    {
-                        var fileName = Path.GetFileName(assemblyPath);
-                        var rootFile = Path.Combine(path, fileName);
-                        File.Copy(assemblyPath, rootFile);
-
-                        assemblyPath = rootFile;
-
-                        Console.WriteLine($"***** Started tests for: {assemblyPath}.");
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(testSuite.RvtFile))
-                    {
-                        var normalizedRvtFile = testSuite.RvtFile.ToLower();
-                        if (
-                               !normalizedRvtFile.EndsWith(".rte")
-                            && !normalizedRvtFile.EndsWith(".rvt")
-                            && !normalizedRvtFile.EndsWith(".rfa")
-                            && !normalizedRvtFile.EndsWith(".rtf")
-                            )
-                        {
-                            Console.WriteLine($"***** Test Suite failed, the file {testSuite.RvtFile} is not a valid revit file.");
-                            continue;
-                        }
-
-                        var filePath = files.FirstOrDefault(f => f.EndsWith(testSuite.RvtFile));
-                        if (string.IsNullOrWhiteSpace(filePath))
-                        {
-                            Console.WriteLine($"***** Test Suite failed, the file {testSuite.RvtFile} is was not found.");
-                            continue;
-                        }
-
-                        doc = app.OpenDocumentFile(filePath);
-                    }
-                    else
-                    {
-                        doc?.Close(false);
+                        Console.WriteLine($"***** Test Suite failed, the file {testSuite.RvtFile} is not a valid revit file.");
+                        e.Succeeded = false;
+                        return;
                     }
 
-                    // Reflects TestCases from the Assembly
-                    var flattenService = new NUnitCaseFlattenService();
-                    var runnerService = new NUnitRunnerService(flattenService);
-                    var request = runnerService.GetRequestFromAssembly(assemblyPath);
+                    var filePath = files.FirstOrDefault(f => f.EndsWith(testSuite.RvtFile));
+                    if (string.IsNullOrWhiteSpace(filePath))
+                    {
+                        Console.WriteLine($"***** Test Suite failed, the file {testSuite.RvtFile} is was not found.");
+                        e.Succeeded = false;
+                        return;
+                    }
 
-                    Console.WriteLine("***** Test Suite:");
-                    Console.WriteLine(JsonHelper.ToString(request));
+                    doc = app.OpenDocumentFile(filePath);
+                }
 
-                    var testRunner = new TestRunnerService();
-                    var results = testRunner.Run(app, request);
-                    resultStringBuilder.Append(results);
+                var testCorePath = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f => f.EndsWith("Revit.TestRunner.TestCore.dll"));
+                var coreAssembly = Assembly.LoadFrom(testCorePath);
+                var attType = coreAssembly.GetTypes().FirstOrDefault(t => t.Name == "InjectDocumentAttribute");
+
+                if (attType == null)
+                {
+                    Console.WriteLine($"***** Test Suite failed, the attribute not found on {coreAssembly.FullName}");
+                    foreach (var tt in coreAssembly.GetTypes())
+                    {
+                        Console.WriteLine($"****** {tt.FullName}");
+                    }
+                    return;
+                }
+
+                var prop = attType.GetProperty("Document", BindingFlags.Public | BindingFlags.Static);
+                prop.SetValue(null, doc);
+
+                ITestRunner testRunner = null;
+                var flattenService = new NUnitCaseFlattenService();
+                var runnerService = new NUnitRunnerService(flattenService);
+                try
+                {
+                    testRunner = runnerService.CreateTestRunner(assemblyPath);
+                    var result = testRunner.Run(null, TestFilter.Empty);
+
+                    if (!string.IsNullOrWhiteSpace(testSuite.Id))
+                    {
+                        result.AddAttribute("testSuiteId", testSuite.Id);
+                    }
+
+                    XmlSerializer serializer = new XmlSerializer(typeof(XmlNode));
+                    TextWriter writer = new StreamWriter("results.xml");
+                    serializer.Serialize(writer, result);
+                    writer.Close();
+
+                    Console.WriteLine("**********          Results             **********");
+                    Console.WriteLine(File.ReadAllText("results.xml"));
+                }
+                finally
+                {
+                    testRunner?.Unload();
                 }
             }
 
-
             e.Succeeded = true;
-
-            if (resultStringBuilder.Length == 0)
-            {
-                Console.WriteLine($"***** No Test Suite could be completed.");
-            }
-            else
-            {
-                Console.WriteLine(resultStringBuilder.ToString());
-            }
 
             Console.WriteLine($"********** Design automation completed **********");
             Console.WriteLine("**************************************************");

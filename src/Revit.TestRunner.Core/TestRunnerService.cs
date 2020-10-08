@@ -42,11 +42,11 @@ namespace Revit.TestRunner
 
             if (testResult.State == TestState.Failed)
             {
-                results = $"====> Test FAILED #{testResult.Id}: {testResult.MethodName}:\n{testResult.Message} \n{testResult.StackTrace}\n\n";
+                results = $"====> Test FAILED #{testResult.TestClass}: {testResult.MethodName}:\n{testResult.Message} \n{testResult.StackTrace}\n\n";
             }
             else
             {
-                results = $"====> Test SUCCEEDED #{testResult.Id}:\n{testResult.MethodName}\n\n";
+                results = $"====> Test SUCCEEDED #{testResult.TestClass}: {testResult.MethodName}\n";
             }
 
             return results;

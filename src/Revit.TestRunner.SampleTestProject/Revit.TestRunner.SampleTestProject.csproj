@@ -178,14 +178,17 @@
     <Compile Include="..\AssemblyInfo\AssemblyInfo.Version.cs">
       <Link>Properties\AssemblyInfo.Version.cs</Link>
     </Compile>
-    <Compile Include="MoreTests.cs" />
-    <Compile Include="ParameterTest.cs" />
-    <Compile Include="RevitTest.cs" />
-    <Compile Include="SampleTest.cs" />
+    <Compile Include="AnotherTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Revit.TestRunner.TestCore\Revit.TestRunner.TestCore.csproj">
+      <Project>{279E9CD1-2A4E-48A3-A206-73533E04536B}</Project>
+      <Name>Revit.TestRunner.TestCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

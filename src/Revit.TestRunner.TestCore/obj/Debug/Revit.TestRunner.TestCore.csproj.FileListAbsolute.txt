@@ -1,0 +1,10 @@
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\bin\Debug\Revit.TestRunner.TestCore.dll
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\bin\Debug\Revit.TestRunner.TestCore.pdb
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\bin\Debug\nunit.framework.dll
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\bin\Debug\nunit.framework.pdb
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\bin\Debug\nunit.framework.xml
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\obj\Debug\Revit.TestRunner.TestCore.csproj.CoreCompileInputs.cache
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\obj\Debug\Revit.TestRunner.TestCore.csproj.CopyComplete
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\obj\Debug\Revit.TestRunner.TestCore.dll
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\obj\Debug\Revit.TestRunner.TestCore.pdb
+C:\Users\Thiago\Source\Repos\Revit.TestRunner\src\Revit.TestRunner.TestCore\obj\Debug\Revit.TestRunner.TestCore.csprojAssemblyReference.cache
