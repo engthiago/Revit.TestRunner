@@ -32,7 +32,8 @@ namespace Revit.TestRunner.DA
             Document doc = null;
             var path = Directory.GetCurrentDirectory();
 
-            Console.WriteLine($"********** Directory Files **********");
+            Console.WriteLine("**************************************************");
+            Console.WriteLine($"**************** Directory Files ****************");
 
             var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
             foreach (var file in files)
@@ -50,9 +51,9 @@ namespace Revit.TestRunner.DA
                 }
             }
 
-            Console.WriteLine("*************************************");
+            Console.WriteLine("**************************************************");
 
-            var testSuitesPath = "testSuites.json";
+            var testSuitesPath = "testSuite.json";
             TestSuite testSuite = null;
             if (!File.Exists(testSuitesPath))
             {
@@ -70,7 +71,7 @@ namespace Revit.TestRunner.DA
             }
             else
             {
-
+                var workitemId = Path.GetFileName(path);
                 var assemblyPath = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f => f.EndsWith(testSuite.Assembly));
 
                 if (string.IsNullOrWhiteSpace(assemblyPath))
@@ -131,6 +132,7 @@ namespace Revit.TestRunner.DA
                     testRunner = runnerService.CreateTestRunner(assemblyPath);
                     var result = testRunner.Run(null, TestFilter.Empty);
 
+                    result.AddAttribute("workitemId", workitemId);
                     if (!string.IsNullOrWhiteSpace(testSuite.Id))
                     {
                         result.AddAttribute("testSuiteId", testSuite.Id);
@@ -152,7 +154,7 @@ namespace Revit.TestRunner.DA
 
             e.Succeeded = true;
 
-            Console.WriteLine($"********** Design automation completed **********");
+            Console.WriteLine($"********** Design automation completed ***********");
             Console.WriteLine("**************************************************");
 
         }
